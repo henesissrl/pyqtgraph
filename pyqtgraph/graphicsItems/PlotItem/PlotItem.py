@@ -1085,6 +1085,24 @@ class PlotItem(GraphicsWidget):
         *name* should be 'left', 'bottom', 'top', or 'right'."""
         self._checkScaleKey(name)
         return self.axes[name]['item']
+
+    def setAxis(self, name, axisItem):
+        '''*name* should be 'left', 'bottom', 'top', or 'right'.'''
+
+        pos = {'top': (1, 1), 'bottom': (3, 1), 'left': (2, 0), 'right': (2, 2)}[name]
+
+        if name in self.axes:
+            item = self.axes[name]['item']
+            item.linkToView(None)
+            self.layout.removeItem(item)
+            del self.axes[name]
+
+        axisItem.linkToView(self.vb)
+        axisItem.setZValue(-1000)
+        axisItem.setFlag(axisItem.ItemNegativeZStacksBehindParent)
+        self.axes[name] = {'item': axisItem, 'pos': pos}
+        self.layout.addItem(axisItem, *pos)
+
         
     def setLabel(self, axis, text=None, units=None, unitPrefix=None, **args):
         """
